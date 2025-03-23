@@ -43,8 +43,8 @@ This repository is licensed under the MIT License. See the [LICENSE](LICENSE) fi
 
 ## 📧 Contact
 For any questions or suggestions, feel free to reach out:
-- **Email:** your-email@example.com
-- **GitHub:** [Your Profile](https://github.com/your-username)
+- **Email:** mugishapascal2008@gmail.com
+- **GitHub:** (https://github.com/MUGISHA-Pascal)
 
 Happy coding! 🚀
 
