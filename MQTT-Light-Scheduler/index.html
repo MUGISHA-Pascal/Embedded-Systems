@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lumina Control</title>
+    <style>
+      :root {
+        --primary: #6e48aa;
+        --secondary: #9d50bb;
+        --accent: #4776e6;
+        --dark: #1a1a2e;
+        --light: #f8f9fa;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        font-family: "Segoe UI", system-ui, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--light);
+      }
+
+      .container {
+        width: 90%;
+        max-width: 400px;
+        background: rgba(30, 30, 60, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .header {
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+      }
+
+      .control-panel {
+        padding: 2rem;
+      }
+
+      .time-selector {
+        margin-bottom: 1.5rem;
+      }
+
+      .time-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      .time-input {
+        width: 100%;
+        padding: 0.8rem;
+        border-radius: 10px;
+        border: none;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      .time-input:focus {
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 0 2px var(--accent);
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 1rem;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(to right, var(--accent), #4a6cf7);
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(71, 118, 230, 0.4);
+      }
+
+      .schedule-display {
+        margin-top: 2rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 1rem;
+      }
+
+      .schedule-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+
+      .schedule-label {
+        font-weight: 500;
+        opacity: 0.7;
+      }
+
+      .schedule-value {
+        font-weight: 600;
+      }
+
+      .status-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1.5rem;
+        font-size: 0.8rem;
+        opacity: 0.7;
+      }
+
+      .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        background: #ffbe0b;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.5;
+        }
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--accent);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>LUMINA CONTROL</h1>
+      </div>
+
+      <div class="control-panel">
+        <form id="light-form" onsubmit="submitSchedule(); return false;">
+          <div class="time-selector">
+            <label class="time-label">ACTIVATION POINT</label>
+            <input
+              type="time"
+              id="onTime"
+              name="onTime"
+              required
+              class="time-input"
+            />
+          </div>
+
+          <div class="time-selector">
+            <label class="time-label">DEACTIVATION POINT</label>
+            <input
+              type="time"
+              id="offTime"
+              name="offTime"
+              required
+              class="time-input"
+            />
+          </div>
+
+          <button type="submit" class="submit-btn">CONFIRM SCHEDULE</button>
+        </form>
+
+        <div class="schedule-display">
+          <div class="schedule-item">
+            <span class="schedule-label">ACTIVATION:</span>
+            <span id="on-time-display" class="schedule-value">--:--</span>
+          </div>
+          <div class="schedule-item">
+            <span class="schedule-label">DEACTIVATION:</span>
+            <span id="off-time-display" class="schedule-value">--:--</span>
+          </div>
+        </div>
+
+        <div class="status-bar">
+          <div class="status-indicator"></div>
+          <span id="statusText">SYNCING WITH DEVICE</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="notification" class="toast">SCHEDULE CONFIGURATION SAVED</div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

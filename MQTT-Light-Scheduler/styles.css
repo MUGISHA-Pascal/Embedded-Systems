@@ -1,0 +1,86 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8faff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;  
+    gap: 20px;
+    height: 100vh;
+  }
+  
+  .container {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .container h1 {
+    font-size: 1.6rem;
+    color: #0a0a23;
+    margin-bottom: 30px;
+  }
+  
+  .scheduler-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .scheduler-form label {
+    font-size: 1rem;
+    color: #333;
+    text-align: left;
+  }
+  
+  .scheduler-form input[type="time"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  .scheduler-form button {
+    padding: 12px;
+    background-color: #3e45ff;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .scheduler-form button:hover {
+    background-color: #2f36d1;
+  }
+  .preview-box {
+    margin-top: 25px;
+    padding: 15px;
+    background-color: #f0f4ff;
+    border-left: 4px solid #3e45ff;
+    border-radius: 8px;
+    text-align: left;
+    color: #333;
+  }
+  
+  .preview-box p {
+    margin: 8px 0;
+  }
+  .final-paragraph {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 15px;
+    text-align: center;
+  }
+  
