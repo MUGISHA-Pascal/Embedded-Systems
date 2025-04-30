@@ -1,10 +1,8 @@
-# 💡 Graphical Light Scheduler
-
-A complete system to schedule and control a light using a web interface, MQTT, WebSocket, and a simulated or physical Arduino.
+# Light Scheduler Project
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 - `communication-socket.py` — WebSocket server that receives commands from the UI and publishes them to an MQTT broker.
 - `schedule-light.py` — MQTT subscriber that listens for commands and sends them to a (simulated or real) Arduino via serial.
@@ -16,7 +14,7 @@ A complete system to schedule and control a light using a web interface, MQTT, W
 
 ---
 
-## ⚙️ Requirements
+##  Requirements
 
 - Python 3.7+
 - Arduino IDE (if using real hardware)
@@ -30,7 +28,7 @@ pip install paho-mqtt websockets pyserial
 
 ---
 
-## 🧪 Simulation Setup (No Arduino Needed)
+## Simulation Setup (No Arduino Needed)
 
 1. **Run the fake Arduino:**
     ```bash
@@ -51,7 +49,7 @@ pip install paho-mqtt websockets pyserial
 
 ---
 
-## 🕹 Usage
+##  Usage
 
 1. Input **On Time** and **Off Time** in the UI.
 2. Click **Submit**.
@@ -64,7 +62,7 @@ pip install paho-mqtt websockets pyserial
 
 ---
 
-## 📡 Communication Flow
+##  Communication Flow
 
 ```
 [User Interface]
@@ -80,7 +78,7 @@ pip install paho-mqtt websockets pyserial
 
 ---
 
-## 🛠 Real Hardware Notes
+##  Real Hardware Notes
 
 - Update the serial port in `schedule-light.py`:
   ```python
@@ -93,14 +91,14 @@ pip install paho-mqtt websockets pyserial
 
 ---
 
-## 👨‍💻 Credits
+##  Credits
 
-Created by **Chael**  
+Created by **MUGISHA Pascal**  
 For testing and demonstration purposes.
 
 ---
 
-## 📬 MQTT Example Message Format
+##  MQTT Example Message Format
 
 ```
 HH:MM ON
@@ -114,7 +112,3 @@ Example:
 ```
 
 ---
-
-## 📜 License
-
-MIT License – Feel free to use and modify.
