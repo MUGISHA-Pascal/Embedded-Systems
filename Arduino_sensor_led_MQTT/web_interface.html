@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DHT Sensor Monitor & LED Control</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+    <!-- Load required Chart.js dependencies in correct order -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0/dist/chartjs-plugin-streaming.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      #sensor-data {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .led-control {
+        margin-top: 20px;
+      }
+      button {
+        padding: 10px 15px;
+        margin: 0 5px;
+        cursor: pointer;
+      }
+      .chart-container {
+        width: 100%;
+        height: 300px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DHT Sensor Monitor & LED Control</h1>
+
+    <div id="sensor-data">
+      <h2>Sensor Data</h2>
+      <p>Temperature: <span id="temperature">--</span> °C</p>
+      <p>Humidity: <span id="humidity">--</span> %</p>
+    </div>
+
+    <div class="led-control">
+      <h2>LED Control</h2>
+      <button id="led-on">Turn LED ON</button>
+      <button id="led-off">Turn LED OFF</button>
+      <p>Status: <span id="led-status">Unknown</span></p>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="sensor-chart"></canvas>
+    </div>
+
+    <script>
+      // MQTT Client Setup
+      const client = new Paho.MQTT.Client(
+        "157.173.101.159",
+        9001,
+        "web_client_" + Math.random().toString(16).substr(2, 8)
+      );
+
+      // Chart Setup
+      const ctx = document.getElementById("sensor-chart").getContext("2d");
+      const chart = new Chart(ctx, {
+        type: "line",
+        plugins: [ChartStreaming], // Register the streaming plugin
+        data: {
+          datasets: [
+            {
+              label: "Temperature (°C)",
+              borderColor: "rgb(255, 99, 132)",
+              backgroundColor: "rgba(255, 99, 132, 0.1)",
+              borderWidth: 1,
+              pointRadius: 0,
+              data: [],
+            },
+            {
+              label: "Humidity (%)",
+              borderColor: "rgb(54, 162, 235)",
+              backgroundColor: "rgba(54, 162, 235, 0.1)",
+              borderWidth: 1,
+              pointRadius: 0,
+              data: [],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: "realtime",
+              realtime: {
+                duration: 60000,
+                refresh: 1000,
+                delay: 1000,
+                onRefresh: (chart) => {
+                  // This empty function is needed for the realtime plugin
+                },
+              },
+            },
+            y: {
+              title: {
+                display: true,
+                text: "Temperature (°C)",
+              },
+            },
+            y1: {
+              position: "right",
+              title: {
+                display: true,
+                text: "Humidity (%)",
+              },
+              grid: {
+                drawOnChartArea: false,
+              },
+            },
+          },
+          interaction: {
+            intersect: false,
+          },
+        },
+      });
+
+      // MQTT Connection
+      client.connect({
+        onSuccess: () => {
+          console.log("Connected to MQTT broker");
+          client.subscribe("sensors/dht");
+          client.subscribe("control/led/status");
+        },
+        onFailure: (err) => {
+          console.error("Connection failed:", err.errorMessage);
+        },
+      });
+
+      // Message Handling
+      client.onMessageArrived = (message) => {
+        if (message.destinationName === "sensors/dht") {
+          const data = JSON.parse(message.payloadString);
+          document.getElementById("temperature").textContent =
+            data.temperature.toFixed(1);
+          document.getElementById("humidity").textContent =
+            data.humidity.toFixed(1);
+
+          const now = Date.now();
+          chart.data.datasets[0].data.push({
+            x: now,
+            y: data.temperature,
+          });
+          chart.data.datasets[1].data.push({
+            x: now,
+            y: data.humidity,
+          });
+          chart.update("quiet");
+        } else if (message.destinationName === "control/led/status") {
+          document.getElementById("led-status").textContent =
+            message.payloadString;
+        }
+      };
+
+      // LED Control
+      document.getElementById("led-on").addEventListener("click", () => {
+        const message = new Paho.MQTT.Message("LED_ON");
+        message.destinationName = "control/led";
+        client.send(message);
+      });
+
+      document.getElementById("led-off").addEventListener("click", () => {
+        const message = new Paho.MQTT.Message("LED_OFF");
+        message.destinationName = "control/led";
+        client.send(message);
+      });
+    </script>
+  </body>
+</html>
