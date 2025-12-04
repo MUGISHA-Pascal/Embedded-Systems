@@ -3,7 +3,7 @@ import pytesseract
 import numpy as np
 
 # Load the image using OpenCV
-image = cv2.imread('img-01.jpg')
+image = cv2.imread('./test-image/image.png')
 
 # invert the colors
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
